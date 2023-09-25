@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"url-shorner/internal/config"
+	"url-shorner/internal/storage/sqlite"
+	"url-shorner/lib/logger/sl"
 
 	"golang.org/x/exp/slog"
 )
@@ -26,8 +28,15 @@ func main() {
 	log.Info("starting up the shorner service", slog.String("env", cfg.Env))      //start service log
 	log.Debug("Debug logs enabled")
 	//storage: sqllite
-	//router: gin go-chi, render
-	//server
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("failed to connect to storage", sl.Err(err))
+		os.Exit(1) //exit code 1 = error
+	}
+	_ = storage //todo remove
+	// dbinited
+	// router: gin go-chi, render
+	// server
 }
 
 func setupLogger(env string) *slog.Logger {
