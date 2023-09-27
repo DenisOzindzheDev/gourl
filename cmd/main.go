@@ -19,7 +19,6 @@ const (
 
 // 43 24
 func main() {
-	//TODO
 	//init config : cleanenv
 	cfg := config.MustLoad() //load config
 	fmt.Println(cfg)         //make sure config is valid todo validate config and add config to vault
@@ -27,21 +26,16 @@ func main() {
 	log := setupLogger(cfg.Env)                                                   //get config env and setup logger
 	defer log.Info("Hello World! im running at", slog.String("host", cfg.Adress)) //adress
 	log.Info("starting up the shorner service", slog.String("env", cfg.Env))      //start service log
-	log.Debug("Debug logs enabled")
+	log.Debug("Debug logs enabled")                                               //if env is local debug logs are enabled
 	//storage: sqllite
-	storage, err := sqlite.New(cfg.StoragePath)
+	storage, err := sqlite.New(cfg.StoragePath) //create new storage
 	if err != nil {
-		log.Error("failed to connect to storage", sl.Err(err))
-		os.Exit(1) //exit code 1 = error
+		log.Error("failed to connect to storage", sl.Err(err)) //if storage connection fails exit
+		os.Exit(1)                                             //exit code 1 = error
 	}
-	_ = storage //todo remove
-	res, err := storage.GetURL("as")
-	if err != nil {
-		log.Error("failed to get url", sl.Err(err))
-		os.Exit(1) //exit code 1 = error
-	}
-	log.Debug("selected url", slog.String("url", res))
-	// dbinited
+	_ = storage                                                            //todo remove!!!!!!!!!!!!!!!!!!!!!!!
+	log.Info("Storage connected", slog.String("storage", cfg.StoragePath)) // success connecion log
+	//TODO
 	// router: gin go-chi, render
 	// server
 }
