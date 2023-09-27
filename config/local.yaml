@@ -1,6 +1,6 @@
 env: "local" #based on git flow 
 storage_path: "./storage/stroage.db" #basic db storage
-default_alias_length: 10
+default_allias_length: 10
 #server configuration
 http_server: 
   adress: "localhost:8080"

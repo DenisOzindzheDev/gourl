@@ -6,6 +6,7 @@ import (
 	"url-shorner/internal/storage/sqlite"
 	"url-shorner/lib/logger/handlers/slogpretty"
 	"url-shorner/lib/logger/sl"
+	"url-shorner/lib/random"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -25,10 +26,10 @@ func main() {
 	//init config : cleanenv
 	cfg := config.MustLoad() //load config fmt.Println(cfg) for make sure config is valid todo validate config and add config to vault
 	//logger: slog
-	log := setupLogger(cfg.Env)                                                   //get config env and setup logger
-	defer log.Info("Hello World! im running at", slog.String("host", cfg.Adress)) //adress
-	log.Info("starting up the shorner service", slog.String("env", cfg.Env))      //start service log
-	log.Debug("Debug logs enabled")                                               //if env is local debug logs are enabled
+	log := setupLogger(cfg.Env)                                              //get config env and setup logger
+	log.Info("Hello World! im running at", slog.String("host", cfg.Adress))  //adress
+	log.Info("starting up the shorner service", slog.String("env", cfg.Env)) //start service log
+	log.Debug("Debug logs enabled")                                          //if env is local debug logs are enabled
 	//storage: sqllite
 	storage, err := sqlite.New(cfg.StoragePath) //create new storage
 	if err != nil {
@@ -45,6 +46,9 @@ func main() {
 	router.Use(middleware.Logger)    // Logger
 	router.Use(middleware.Recoverer) // Recoverer
 	router.Use(middleware.URLFormat) // URL format
+
+	var aliasTest = random.NewRandomString(10)                                                     //todo remove
+	log.Debug("Created random alias %s for test generated  ", slog.String("aliasTest", aliasTest)) //todo remove
 	//auth middleware
 	// server
 }

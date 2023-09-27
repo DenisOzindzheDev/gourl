@@ -56,7 +56,7 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 			render.JSON(w, r, response.ValidationErrors(validateErr)) //render errors from response handler
 			return                                                    // :D
 		}
-		var defaultAlliasLength = config.MustLoad().DefaultAlliasLength
+		var defaultAlliasLength int = int(config.MustLoad().DefaultAlliasLength)
 		alias := req.Alias // alias
 		if alias == "" {
 			req.Alias = random.NewRandomString(defaultAlliasLength) // generate random alias
