@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Env         string `yaml:"env" env-default:"local" env-required:"true"`
-	StoragePath string `yaml:"storage_path" env-default:"./storage" env-required:"true"`
-	HTTPServer  `yaml:"http_server"`
+	Env                 string `yaml:"env" env-default:"local" env-required:"true"`
+	StoragePath         string `yaml:"storage_path" env-default:"./storage" env-required:"true"`
+	DefaultAlliasLength int    `yaml:"default_allias_length" env-default:"10" env-required:"true" `
+	HTTPServer          `yaml:"http_server"`
 }
 
 type HTTPServer struct {
