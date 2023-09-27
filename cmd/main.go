@@ -17,6 +17,7 @@ const (
 	envProd  = "prod"
 )
 
+// 43 24
 func main() {
 	//TODO
 	//init config : cleanenv
@@ -34,6 +35,12 @@ func main() {
 		os.Exit(1) //exit code 1 = error
 	}
 	_ = storage //todo remove
+	res, err := storage.GetURL("as")
+	if err != nil {
+		log.Error("failed to get url", sl.Err(err))
+		os.Exit(1) //exit code 1 = error
+	}
+	log.Debug("selected url", slog.String("url", res))
 	// dbinited
 	// router: gin go-chi, render
 	// server
@@ -49,5 +56,6 @@ func setupLogger(env string) *slog.Logger {
 	case envProd:
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	}
+
 	return log
 }
