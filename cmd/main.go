@@ -1,12 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"url-shorner/internal/config"
 	"url-shorner/internal/storage/sqlite"
+	"url-shorner/lib/logger/handlers/slogpretty"
 	"url-shorner/lib/logger/sl"
 
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	_ "github.com/go-chi/chi/v5/middleware"
 	"golang.org/x/exp/slog"
 )
 
@@ -20,8 +23,7 @@ const (
 // 43 24
 func main() {
 	//init config : cleanenv
-	cfg := config.MustLoad() //load config
-	fmt.Println(cfg)         //make sure config is valid todo validate config and add config to vault
+	cfg := config.MustLoad() //load config fmt.Println(cfg) for make sure config is valid todo validate config and add config to vault
 	//logger: slog
 	log := setupLogger(cfg.Env)                                                   //get config env and setup logger
 	defer log.Info("Hello World! im running at", slog.String("host", cfg.Adress)) //adress
@@ -37,6 +39,13 @@ func main() {
 	log.Info("Storage connected", slog.String("storage", cfg.StoragePath)) // success connecion log
 	//TODO
 	// router: gin go-chi, render
+	router := chi.NewRouter()
+	//todo custom MW
+	router.Use(middleware.RequestID) //Мидлварина
+	router.Use(middleware.Logger)    // Logger
+	router.Use(middleware.Recoverer) // Recoverer
+	router.Use(middleware.URLFormat) // URL format
+	//auth middleware
 	// server
 }
 
@@ -44,12 +53,24 @@ func setupLogger(env string) *slog.Logger {
 	var log *slog.Logger
 	switch env {
 	case envLocal:
-		log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+		//log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+		log = setupPrettySlog()
 	case envDev:
-		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+		//log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+		log = setupPrettySlog()
 	case envProd:
-		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+		//log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+		log = setupPrettySlog()
 	}
 
 	return log
+}
+func setupPrettySlog() *slog.Logger {
+	opts := slogpretty.PrettyHandlerOptions{
+		SlogOpts: &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		},
+	}
+	handler := opts.NewPrettyHandler(os.Stdout)
+	return slog.New(handler)
 }
