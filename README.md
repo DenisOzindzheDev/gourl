@@ -8,9 +8,9 @@ middleware authentication.
 
 ## Todo
 
-- [ ] - Add elasticsearch to faster performance, 
-- [ ] - Deploy app to minkube
-- [ ] - Add other db support
+- [ ] - Add elasticsearch to faster performance :running:
+- [ ] - Deploy app to minkube 
+- [ ] - Add other db support :book:
 - [ ] - Interface
 
 ## Packages 
@@ -30,4 +30,4 @@ require (
 
 ## Contributors
 
-Denis Ozindzhe 
+Denis Ozindzhe :fire: 
