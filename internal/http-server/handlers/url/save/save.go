@@ -1,11 +1,14 @@
 package save //save handler
 
 import (
+	"errors"
 	"net/http"
 	"url-shorner/internal/config"
 	"url-shorner/lib/api/response"
 	"url-shorner/lib/logger/sl"
 	"url-shorner/lib/random"
+
+	"url-shorner/internal/storage"
 
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -61,5 +64,25 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		if alias == "" {
 			req.Alias = random.NewRandomString(defaultAlliasLength) // generate random alias
 		}
+		var id int64 //id of the request todo lastinsetd
+		id, err = urlSaver.SaveURL(req.Alias, req.URL)
+		if err != nil {
+			if errors.Is(err, storage.ErrDuplicateAlias) {
+				log.Info("error saving URL, dublicated aliases", sl.Err(err))
+				render.JSON(w, r, response.Error("Dublicated alias"))
+			}
+			if errors.Is(err, storage.ErrDuplicateURL) {
+				log.Info("error saving URL, dublicated URLs", sl.Err(err))
+				render.JSON(w, r, response.Error("Dublicated URL"))
+			}
+			log.Info("error saving URL", sl.Err(err))
+			render.JSON(w, r, response.Error("Error saving URL"))
+			return
+		}
+		log.Info("URL saved", slog.Int64("id", id))
+		render.JSON(w, r, Response{
+			Response: response.OK(),
+			Alias:    alias,
+		})
 	}
 }

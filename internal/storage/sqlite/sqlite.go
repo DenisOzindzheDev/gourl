@@ -53,8 +53,11 @@ func (s *Storage) SaveURL(alias string, urlToSave string) (int64, error) {
 	//todo make more efficient
 	if err != nil {
 		if sqlLiteErr, ok := err.(sqlite3.Error); ok && sqlLiteErr.ExtendedCode == sqlite3.ErrConstraintUnique || sqlLiteErr.ExtendedCode == sqlite3.ErrNoExtended(sqlite3.ErrConstraint) {
-			return 0, fmt.Errorf("%s error: %s", op, storage.ErrURLExists)
+			//fmt.Sprintf("%s sqlite dublicate alias", op, sl.Err(storage.ErrDuplicateAlias))
+			// alias regenerate TODO
+			return 0, fmt.Errorf("%s error: %s", op, storage.ErrDuplicateAlias)
 		}
+		//if sqlLiteErr, ok := err.(sqlite3.Error); ok && sqlLiteErr.ExtendedCode == sqlite3.ErrConstraintUnique || sqlLiteErr.ExtendedCode == sqlite3.ErrNoExtended(sqlite3.ErrConstraint
 	}
 	//get the last inserted id
 	id, err := res.LastInsertId() //last inserted id

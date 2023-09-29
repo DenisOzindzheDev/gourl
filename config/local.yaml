@@ -1,6 +1,6 @@
 env: "local" #based on git flow 
 storage_path: "./storage/stroage.db" #basic db storage
-default_allias_length: 10
+default_allias_length: 10 #if allias is null then genrate random with this length
 #server configuration
 http_server: 
   adress: "localhost:8080"

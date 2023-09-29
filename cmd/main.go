@@ -21,7 +21,7 @@ const (
 	envProd  = "prod"
 )
 
-// 43 24
+// 1 25 19
 func main() {
 	//init config : cleanenv
 	cfg := config.MustLoad() //load config fmt.Println(cfg) for make sure config is valid todo validate config and add config to vault
